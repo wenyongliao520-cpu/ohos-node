@@ -2,14 +2,36 @@
 set -e
 
 if [ -z "$1" ]; then
-    echo "usage: ./build.sh <branch name or tag name>"
+    echo "usage: ./build.sh <branch name or tag name> [arm64|x64]"
     echo "example: ./build.sh main"
     echo "example: ./build.sh v24.2.0"
+    echo "example: ./build.sh v24.2.0 x64"
     exit 1
 fi
 
 version=$1
+arch=${2:-x64}
 workdir=$(pwd)
+
+case "$arch" in
+  arm64)
+    target_triple="aarch64-unknown-linux-ohos"
+    dest_cpu="arm64"
+    package_arch="arm64"
+    ;;
+  x64|x86_64)
+    target_triple="x86_64-unknown-linux-ohos"
+    dest_cpu="x64"
+    package_arch="x64"
+    ;;
+  *)
+    echo "unsupported arch: $arch"
+    echo "usage: ./build.sh <branch name or tag name> [arm64|x64]"
+    exit 1
+    ;;
+esac
+
+package_dir="node-${version}-openharmony-${package_arch}"
 
 query_component() {
   component=$1
@@ -26,7 +48,7 @@ rm -rf *.tar.gz \
   manifest_tag.xml \
   llvm-19 \
   node \
-  node-${version}-openharmony-arm64
+  node-${version}-openharmony-*
 
 # setup openharmony sdk
 sdk_download_url=$(query_component "ohos-sdk-public" | jq -r ".data.list.dataList[0].obsPath")
@@ -51,8 +73,8 @@ cd ..
 git clone --branch $version --depth 1 https://github.com/nodejs/node.git
 cd node
 
-export CC="$workdir/llvm-19/llvm/bin/aarch64-unknown-linux-ohos-clang"
-export CXX="$workdir/llvm-19/llvm/bin/aarch64-unknown-linux-ohos-clang++"
+export CC="$workdir/llvm-19/llvm/bin/${target_triple}-clang"
+export CXX="$workdir/llvm-19/llvm/bin/${target_triple}-clang++"
 export CC_host="gcc"
 export CXX_host="g++"
 
@@ -67,10 +89,10 @@ if echo " $need_no_error_versions " | grep -q " $version "; then
     export CXX="$CXX -Wno-error=implicit-function-declaration"
 fi
 
-CONFIGURE_ARGS="--dest-cpu=arm64 \
+CONFIGURE_ARGS="--dest-cpu=${dest_cpu} \
   --dest-os=openharmony \
   --cross-compiling \
-  --prefix=$workdir/node-${version}-openharmony-arm64"
+  --prefix=$workdir/${package_dir}"
 
 # Node.js's build system enables Temporal by default when a Rust environment
 # is available on the build machine.
@@ -88,10 +110,10 @@ make install
 cd ..
 
 # code signing
-$workdir/ohos-sdk/linux/toolchains/lib/binary-sign-tool sign \
-  -inFile node-${version}-openharmony-arm64/bin/node \
-  -outFile node-${version}-openharmony-arm64/bin/node \
+"$workdir/ohos-sdk/linux/toolchains/lib/binary-sign-tool" sign \
+  -inFile "${package_dir}/bin/node" \
+  -outFile "${package_dir}/bin/node" \
   -selfSign 1
 
-cp LICENSE node-${version}-openharmony-arm64
-tar -zcf node-${version}-openharmony-arm64.tar.gz node-${version}-openharmony-arm64
+cp LICENSE "${package_dir}"
+tar -zcf "${package_dir}.tar.gz" "${package_dir}"

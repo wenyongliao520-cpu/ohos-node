@@ -8,7 +8,7 @@
 
 ## 获取预构建包
 
-前往 [release 页面](https://github.com/hqzing/ohos-node/releases) 获取。
+前往你的 fork 仓库的 release 页面获取。
 
 ## 用法
 **1\. 在鸿蒙 PC 中使用**
@@ -17,9 +17,10 @@
 
 ```sh
 cd ~
-curl -L -O https://github.com/hqzing/ohos-node/releases/download/v24.2.0/node-v24.2.0-openharmony-arm64.tar.gz
-tar -zxf node-v24.2.0-openharmony-arm64.tar.gz
-export PATH=$PATH:~/node-v24.2.0-openharmony-arm64/bin
+REPO=YOUR_GITHUB_USER/ohos-node
+curl -L -O https://github.com/$REPO/releases/download/v24.2.0/node-v24.2.0-openharmony-x64.tar.gz
+tar -zxf node-v24.2.0-openharmony-x64.tar.gz
+export PATH=$PATH:~/node-v24.2.0-openharmony-x64/bin
 
 # 现在可以使用 node 命令了
 ```
@@ -29,12 +30,12 @@ export PATH=$PATH:~/node-v24.2.0-openharmony-arm64/bin
 用 hdc 把它推到设备上，然后以“解压 + 配 PATH” 的方式使用。
 
 ```sh
-hdc file send node-v24.2.0-openharmony-arm64.tar.gz /data
+hdc file send node-v24.2.0-openharmony-x64.tar.gz /data
 hdc shell
 
 cd /data
-tar -zxf node-v24.2.0-openharmony-arm64.tar.gz
-export PATH=$PATH:/data/node-v24.2.0-openharmony-arm64/bin
+tar -zxf node-v24.2.0-openharmony-x64.tar.gz
+export PATH=$PATH:/data/node-v24.2.0-openharmony-x64/bin
 
 # 现在可以使用 node 命令了
 ```
@@ -48,9 +49,10 @@ docker run -itd --name=ohos ghcr.io/hqzing/dockerharmony:latest
 docker exec -it ohos sh
 
 cd /root
-curl -L -O https://github.com/hqzing/ohos-node/releases/download/v24.2.0/node-v24.2.0-openharmony-arm64.tar.gz
-tar -zxf node-v24.2.0-openharmony-arm64.tar.gz -C /opt
-export PATH=$PATH:/opt/node-v24.2.0-openharmony-arm64/bin
+REPO=YOUR_GITHUB_USER/ohos-node
+curl -L -O https://github.com/$REPO/releases/download/v24.2.0/node-v24.2.0-openharmony-x64.tar.gz
+tar -zxf node-v24.2.0-openharmony-x64.tar.gz -C /opt
+export PATH=$PATH:/opt/node-v24.2.0-openharmony-x64/bin
 
 # 现在可以使用 node 命令了
 ```
@@ -64,7 +66,7 @@ export PATH=$PATH:/opt/node-v24.2.0-openharmony-arm64/bin
 这里以 Ubuntu 24.04 x64 作为示例：
 ```sh
 sudo apt update && sudo apt install -y build-essential unzip jq
-./build.sh v24.2.0
+./build.sh v24.2.0 x64
 ```
 
 **2\. 使用流水线构建**

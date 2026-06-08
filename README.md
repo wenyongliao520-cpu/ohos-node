@@ -8,7 +8,7 @@ This project compiles Node.js for the OpenHarmony platform and releases pre-buil
 
 ## Get Pre-built Packages
 
-Head to the [releases page](https://github.com/hqzing/ohos-node/releases) to download.
+Head to your fork's releases page to download.
 
 ## Usage
 
@@ -18,9 +18,10 @@ Download the tarball with `curl` in the “Terminal” (HiShell), then extract i
 
 ```sh
 cd ~
-curl -L -O https://github.com/hqzing/ohos-node/releases/download/v24.2.0/node-v24.2.0-openharmony-arm64.tar.gz 
-tar -zxf node-v24.2.0-openharmony-arm64.tar.gz
-export PATH=$PATH:~/node-v24.2.0-openharmony-arm64/bin
+REPO=YOUR_GITHUB_USER/ohos-node
+curl -L -O https://github.com/$REPO/releases/download/v24.2.0/node-v24.2.0-openharmony-x64.tar.gz
+tar -zxf node-v24.2.0-openharmony-x64.tar.gz
+export PATH=$PATH:~/node-v24.2.0-openharmony-x64/bin
 
 # You can now use the 'node' command.
 ```
@@ -30,12 +31,12 @@ export PATH=$PATH:~/node-v24.2.0-openharmony-arm64/bin
 Push the tarball to the device with `hdc`, extract, and update `PATH`.
 
 ```sh
-hdc file send node-v24.2.0-openharmony-arm64.tar.gz /data
+hdc file send node-v24.2.0-openharmony-x64.tar.gz /data
 hdc shell
 
 cd /data
-tar -zxf node-v24.2.0-openharmony-arm64.tar.gz
-export PATH=$PATH:/data/node-v24.2.0-openharmony-arm64/bin
+tar -zxf node-v24.2.0-openharmony-x64.tar.gz
+export PATH=$PATH:/data/node-v24.2.0-openharmony-x64/bin
 
 # You can now use the 'node' command.
 ```
@@ -49,9 +50,10 @@ docker run -itd --name=ohos ghcr.io/hqzing/dockerharmony:latest
 docker exec -it ohos sh
 
 cd /root
-curl -L -O https://github.com/hqzing/ohos-node/releases/download/v24.2.0/node-v24.2.0-openharmony-arm64.tar.gz 
-tar -zxf node-v24.2.0-openharmony-arm64.tar.gz -C /opt
-export PATH=$PATH:/opt/node-v24.2.0-openharmony-arm64/bin
+REPO=YOUR_GITHUB_USER/ohos-node
+curl -L -O https://github.com/$REPO/releases/download/v24.2.0/node-v24.2.0-openharmony-x64.tar.gz
+tar -zxf node-v24.2.0-openharmony-x64.tar.gz -C /opt
+export PATH=$PATH:/opt/node-v24.2.0-openharmony-x64/bin
 
 # You can now use the 'node' command.
 ```
@@ -65,7 +67,7 @@ You need a Linux x64 host to cross-compile Node.js with the supplied `build.sh`.
 Example on Ubuntu 24.04 x64:
 ```sh
 sudo apt update && sudo apt install -y build-essential unzip jq
-./build.sh v24.2.0
+./build.sh v24.2.0 x64
 ```
 
 **2. CI Build**
